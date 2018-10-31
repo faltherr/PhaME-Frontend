@@ -1,0 +1,57 @@
+.input-main-container{
+    height: 100%;
+    padding-left: 10%;
+    padding-right: 10%;
+}
+
+h4{
+    margin-bottom: 25px;
+}
+
+.panel-body{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+}
+
+.form-row{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+input{
+    width: 50%;
+}
+
+.file-selector-input-container{
+    width: 50%;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.slider-container{
+    width: 50%;
+    display: flex;
+}
+
+.cutoff-input{
+    width: 25%;
+}
+
+.rangeslider.rangeslider-horizontal{
+    width: 75%;
+}
+
+/* .form-prompts-container{
+    height: 10vh;
+    width: 10vw;
+    background-color: blue;
+}
+
+.form-inputs-container{
+    height: 10vh;
+    width: 10vw;
+    background-color: red;
+} */

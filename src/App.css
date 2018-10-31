@@ -1,5 +1,14 @@
 .App {
   text-align: center;
+  background-color: white;
+  height: 100vh;
+  width: 100vw;
+}
+
+.phame-header{
+  font-size: 63px;
+  text-shadow: 3px 3px 3px  rgba(252, 173, 100, 0.578);
+  font-weight: bolder;
 }
 
 .App-logo {
