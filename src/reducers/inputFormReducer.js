@@ -10,6 +10,7 @@ const SELECTION_ANALYSIS_INPUT = 'SELECTION_ANALYSIS_INPUT'
 const INT_FILES_INPUT = 'INT_FILES_INPUT'
 const NUM_THREADS_INPUT = 'NM_THREADS_INPUT'
 const CREATE_FORM = 'CREATE_FORM'
+const BUILD_SNP_DB_INPUT = 'BUILD_SNP_DB_INPUT'
 
 let initialState ={
     projectName: '',
@@ -17,6 +18,7 @@ let initialState ={
     referenceGenome: '',
     reference: '',
     cutoff: 0.1,
+    buildSNPDB: '',
     genSNP: '',
     treeOption: '',
     selectionAnalysisOption: 0,
@@ -50,6 +52,11 @@ export default function reducer(state = initialState, action){
             return{
                 ...state,
                 cutoff: action.payload
+            }
+        case BUILD_SNP_DB_INPUT:
+            return{
+                ...state,
+                buildSNPDB: action.payload
             }
         case GEN_SNP_INPUT:
             return{
@@ -126,6 +133,13 @@ export function handleCutoffInputBox(event){
     return{
         type: CUTOFF_INPUT,
         payload: +event.target.value
+    }
+}
+
+export function handleBuildSNP(event){
+    return{
+        type: BUILD_SNP_DB_INPUT,
+        payload: event
     }
 }
 

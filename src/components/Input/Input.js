@@ -4,7 +4,7 @@ import '../../styles/input.css';
 import { connect } from 'react-redux'
 import Slider from 'react-rangeslider'
 
-import {handleProjectName, handleDataType, handleReference, handleCutoff, handleCutoffInputBox,handleGenerateSNP,handleTreeOption, handleSelectionAnalysis, handleIntermediateFiles,handleNumThreads, createForm} from '../../reducers/inputFormReducer'
+import {handleProjectName, handleDataType, handleReference, handleCutoff, handleCutoffInputBox,handleGenerateSNP,handleTreeOption, handleSelectionAnalysis, handleIntermediateFiles,handleNumThreads, createForm, handleBuildSNP} from '../../reducers/inputFormReducer'
 
 class InputForm extends Component{
   constructor(){
@@ -22,7 +22,7 @@ handleSubmit = (event) => {
 }
 
   render(){
-  let {handleProjectName, handleDataType, handleCutoff,handleCutoffInputBox, handleReference, handleGenerateSNP, handleTreeOption,handleSelectionAnalysis,handleIntermediateFiles,handleNumThreads} = this.props
+  let {handleProjectName, handleDataType, handleCutoff,handleCutoffInputBox, handleReference, handleGenerateSNP, handleTreeOption,handleSelectionAnalysis,handleIntermediateFiles,handleNumThreads, handleBuildSNP} = this.props
   console.log(this.props)
   return (
     <div className='input-main-container'>
@@ -71,6 +71,15 @@ handleSubmit = (event) => {
             <Slider min={0} max={1} step={0.01} value={this.props.cutoff} onChange={handleCutoff} tooltip={false} style={{'width':'400px'}}/>
             <input className='cutoff-input' type='number' step={0.01} value={this.props.cutoff} onChange={handleCutoffInputBox}/>
           </div>
+          </div>
+          <div className='form-row'>
+          <label>Build SNP database</label>
+          <ButtonToolbar>
+              <ToggleButtonGroup name='buildSNPdb' type="radio" value={this.props.buildSNPDB} onChange={handleBuildSNP}>
+                <ToggleButton value={1}>Yes</ToggleButton>
+                <ToggleButton value={0}>No</ToggleButton>
+              </ToggleButtonGroup>
+            </ButtonToolbar>
           </div>
           <div className='form-row'>
           <label>Generate SNPs from Coding Regions</label>
@@ -133,9 +142,10 @@ function mapStateToProps(state){
     treeOption: state.inputFormReducer.treeOption,
     selectionAnalysisOption: state.inputFormReducer.selectionAnalysisOption,
     intermediateFilesOption: state.inputFormReducer.intermediateFilesOption,
-    numberTreads: state.inputFormReducer.numberTreads
+    numberTreads: state.inputFormReducer.numberTreads,
+    buildSNPDB: state.inputFormReducer.buildSNPDB
   }
 }
 
 
-export default connect(mapStateToProps, {handleProjectName, handleDataType, handleReference, handleCutoff,handleCutoffInputBox,handleGenerateSNP,handleTreeOption, handleSelectionAnalysis, handleIntermediateFiles,handleNumThreads})(InputForm)
+export default connect(mapStateToProps, {handleProjectName, handleDataType, handleReference, handleCutoff,handleCutoffInputBox,handleGenerateSNP,handleTreeOption, handleSelectionAnalysis, handleIntermediateFiles,handleNumThreads,handleBuildSNP})(InputForm)
