@@ -1,35 +1,46 @@
 import React, {Component} from 'react';
 import {Panel, ToggleButton, ToggleButtonGroup, ButtonToolbar} from 'react-bootstrap';
 import '../../styles/input.css';
-import axios from 'axios'
 import { connect } from 'react-redux'
 import Slider from 'react-rangeslider'
 
-import {handleProjectName, handleDataType, handleReference, handleCutoff,handleGenerateSNP,handleTreeOption, handleSelectionAnalysis, handleIntermediateFiles,handleNumThreads} from '../../reducers/inputFormReducer'
+import {handleProjectName, handleDataType, handleReference, handleCutoff, handleCutoffInputBox,handleGenerateSNP,handleTreeOption, handleSelectionAnalysis, handleIntermediateFiles,handleNumThreads, createForm} from '../../reducers/inputFormReducer'
 
 class InputForm extends Component{
+  constructor(){
+    super ()
+    this.state ={
+      fields:{},
+      errors:{}
+    }
+  }
 
+handleSubmit = (event) => {
+  console.log(777777777, this.props)
+  event.preventDefault()
+  createForm(this.props)
+}
 
-  
   render(){
-  let {handleProjectName, handleDataType, handleCutoff, handleReference, handleGenerateSNP, handleTreeOption,handleSelectionAnalysis,handleIntermediateFiles,handleNumThreads} = this.props
+  let {handleProjectName, handleDataType, handleCutoff,handleCutoffInputBox, handleReference, handleGenerateSNP, handleTreeOption,handleSelectionAnalysis,handleIntermediateFiles,handleNumThreads} = this.props
   console.log(this.props)
   return (
     <div className='input-main-container'>
       <h1 className='phame-header'>PhaME</h1>
       <h4>PhaME requires FASTQ data files in FASTQ format. To perform an analysis enter a project name and fill out the fields in the form below.</h4>
+      <br/>
+      <form id='phame-form' onSubmit={this.handleSubmit}>
       <Panel>
         <Panel.Heading>
           <Panel.Title componentClass="h3">Input Sequence Information</Panel.Title>
         </Panel.Heading>
         <Panel.Body>
-          <form id='phame-form' onSubmit={this.handleSubmit}>
           <div className='form-row'>
             <label>Project Name</label>
             <input name='projectName' onChange={handleProjectName} value={this.props.projectName}/>
           </div>
           <div className='form-row'>
-            <label>Data Type</label>
+            <label>Input Data Type</label>
             <ButtonToolbar>
               <ToggleButtonGroup type="checkbox" value={this.props.dataType} onChange={handleDataType}>
                 <ToggleButton value={0}>Full</ToggleButton>
@@ -40,7 +51,9 @@ class InputForm extends Component{
           </div>
           <div className='form-row'>
           <label>Reference Genomes</label>
+          <div className='file-selector-input-container'>
             <input type='file' multiple/>
+          </div>
           </div>
           <div className='form-row'>
           <label>Reference</label>
@@ -53,23 +66,23 @@ class InputForm extends Component{
             </ButtonToolbar>
           </div>
           <div className='form-row'>
-          <label>Cutoff</label>
+          <label>Linear Coverage Cutoff</label>
           <div className='slider-container'>
-            {/* <input className='cutoff-input' type='number' step={0.01} value={this.props.cutoff}/> */}
             <Slider min={0} max={1} step={0.01} value={this.props.cutoff} onChange={handleCutoff} tooltip={false} style={{'width':'400px'}}/>
+            <input className='cutoff-input' type='number' step={0.01} value={this.props.cutoff} onChange={handleCutoffInputBox}/>
           </div>
           </div>
           <div className='form-row'>
           <label>Generate SNPs from Coding Regions</label>
           <ButtonToolbar>
               <ToggleButtonGroup name='genSNPs' type="radio" value={this.props.genSNP} onChange={handleGenerateSNP}>
-                <ToggleButton value={0}>Only Align to Reference</ToggleButton>
-                <ToggleButton value={1}>Build SNP Database</ToggleButton>
+                <ToggleButton value={1}>Yes</ToggleButton>
+                <ToggleButton value={0}>No</ToggleButton>
               </ToggleButtonGroup>
             </ButtonToolbar>
           </div>
           <div className='form-row'>
-          <label>Evolutionary Tree Format</label>
+          <label>Tree Building Algorithm</label>
           <ButtonToolbar>
               <ToggleButtonGroup name='buildTree' type="radio" value={this.props.treeOption} onChange={handleTreeOption}>
                 <ToggleButton value={2}>RAxML</ToggleButton>
@@ -98,13 +111,13 @@ class InputForm extends Component{
 
             <input className='input-threads' type='number' min='1' max='4' onChange={handleNumThreads} value={this.props.numberTreads} />
             </div>
-          </form> 
         </Panel.Body>
        </Panel>
        <div>
         <button type="submit">Submit</button>
         <button type="button">Clear Values</button>
       </div>
+      </form> 
     </div>
   )
 }
@@ -125,4 +138,4 @@ function mapStateToProps(state){
 }
 
 
-export default connect(mapStateToProps, {handleProjectName, handleDataType, handleReference, handleCutoff,handleGenerateSNP,handleTreeOption, handleSelectionAnalysis, handleIntermediateFiles,handleNumThreads})(InputForm)
+export default connect(mapStateToProps, {handleProjectName, handleDataType, handleReference, handleCutoff,handleCutoffInputBox,handleGenerateSNP,handleTreeOption, handleSelectionAnalysis, handleIntermediateFiles,handleNumThreads})(InputForm)

@@ -6,6 +6,8 @@
     "@babel/core": "^7.1.2",
     "axios": "^0.18.0",
     "babel-loader": "^8.0.4",
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4",
     "react": "^16.6.0",
     "react-bootstrap": "^0.32.4",
     "react-dom": "^16.6.0",
@@ -35,7 +37,7 @@
     "not op_mini all"
   ],
   "description": "This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).",
-  "main": "index.js",
+  "main": "server/index.js",
   "devDependencies": {},
   "author": "",
   "license": "ISC"

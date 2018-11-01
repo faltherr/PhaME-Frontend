@@ -1,3 +1,5 @@
+import axios from 'axios'
+
 const PROJECT_NAME_INPUT = 'PROJECT_NAME_INPUT'
 const DATA_TYPE_INPUT = 'DATA_TYPE_INPUT'
 const REFERENCE_INPUT = 'REFERENCE_INPUT'
@@ -7,6 +9,7 @@ const TREE_OPTION_INPUT = 'TREE_OPTION_INPUT'
 const SELECTION_ANALYSIS_INPUT = 'SELECTION_ANALYSIS_INPUT'
 const INT_FILES_INPUT = 'INT_FILES_INPUT'
 const NUM_THREADS_INPUT = 'NM_THREADS_INPUT'
+const CREATE_FORM = 'CREATE_FORM'
 
 let initialState ={
     projectName: '',
@@ -18,7 +21,8 @@ let initialState ={
     treeOption: '',
     selectionAnalysisOption: 0,
     intermediateFilesOption: 0,
-    numberTreads: 1
+    numberTreads: 1,
+    postResponse: []
 }
 
 export default function reducer(state = initialState, action){
@@ -72,6 +76,11 @@ export default function reducer(state = initialState, action){
                 ...state,
                 numberTreads: action.payload
             }
+        case CREATE_FORM:
+            return{
+                ...state,
+                postResponse: action.payload
+            }
         // case RESET_FORM_INPUT:
         //     return initialState
           default:
@@ -113,6 +122,13 @@ export function handleCutoff(event){
     }
 }
 
+export function handleCutoffInputBox(event){
+    return{
+        type: CUTOFF_INPUT,
+        payload: +event.target.value
+    }
+}
+
 export function handleGenerateSNP(event){
     return{
         type: GEN_SNP_INPUT,
@@ -146,6 +162,30 @@ export function handleNumThreads(event){
         type: NUM_THREADS_INPUT,
         payload: event.target.value
     }
+}
+
+export function createForm(props){
+    let formValues = {
+            projectName: props.projectName,
+            dataType:  props.dataType,
+            reference: props.reference,
+            cutoff:  props.cutoff,
+            genSNP:  props.genSNP,
+            treeOption: props.treeOption,
+            selectionAnalysisOption: props.selectionAnalysisOption,
+            intermediateFilesOption: props.intermediateFilesOption,
+            numberTreads: props.numberTreads
+    }
+
+    let postResponse = axios.post('http://localhost:3693/api/form', formValues).then(response => {
+        return response.data
+      })
+
+    return{
+        type: CREATE_FORM,
+        payload: postResponse
+    }
+
 }
 
 
