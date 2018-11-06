@@ -8,6 +8,18 @@ h4{
     margin-bottom: 25px;
 }
 
+form{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.panel.panel-default{
+    width: 100%;
+    max-width: 1000px;
+}
+
 .panel-body{
     display: flex;
     flex-direction: column;
@@ -39,8 +51,52 @@ label.btn.btn-default.active{
     justify-content: flex-end;
 }
 
+.inputFile{
+	width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
+}
+
+.btn.btn-default label{
+    font-weight: 400;
+    display: flex;
+    justify-content: space-around;
+    align-items: baseline;
+}
+
+#upload-file-button{
+    width:175px;
+}
+
+#upload-file-button i{
+    font-size:20px;
+}
+
+/* .upload-genome-container {
+    font-size: 1.25em;
+    font-weight: 700;
+    color: white;
+    background-color: black;
+    display: inline-block;
+    cursor: pointer;
+} */
+
+/* .inputfile:focus + label {
+	outline: 1px dotted #000;
+	outline: -webkit-focus-ring-color auto 5px;
+}
+
+.inputFile:focus + label,
+.inputFile + label:hover {
+    background-color: red;
+} */
+
 .slider-container{
     width: 50%;
+    max-width: 443px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -62,6 +118,12 @@ label.btn.btn-default.active{
 
 .rangeslider-horizontal .rangeslider__fill{
     background-color: #FFAC5D
+}
+
+.form-button-container{
+    width: 25%;
+    display: flex;
+    justify-content: space-between; 
 }
 
 /* .form-prompts-container{

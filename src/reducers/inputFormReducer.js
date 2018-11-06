@@ -2,7 +2,9 @@ import axios from 'axios'
 
 const PROJECT_NAME_INPUT = 'PROJECT_NAME_INPUT'
 const DATA_TYPE_INPUT = 'DATA_TYPE_INPUT'
+const READS_INPUT = 'READS_INPUT'
 const REFERENCE_INPUT = 'REFERENCE_INPUT'
+const ALIGNER_INPUT = 'ALIGNER_INPUT'
 const CUTOFF_INPUT = 'CUTOFF_INPUT'
 const GEN_SNP_INPUT = 'GEN_SNP_INPUT'
 const TREE_OPTION_INPUT = 'TREE_OPTION_INPUT'
@@ -15,9 +17,11 @@ const BUILD_SNP_DB_INPUT = 'BUILD_SNP_DB_INPUT'
 let initialState ={
     projectName: '',
     dataType: [0],
+    reads: 2,
     referenceGenome: '',
     reference: '',
     cutoff: 0.1,
+    aligner: 'bowtie',
     buildSNPDB: '',
     genSNP: '',
     treeOption: '',
@@ -41,6 +45,11 @@ export default function reducer(state = initialState, action){
                 dataType: action.payload
             }
 
+        case READS_INPUT:
+            return{
+                ...state,
+                reads: action.payload
+            }
         // ADD Reference genome file upload action creator
 
         case REFERENCE_INPUT:
@@ -52,6 +61,11 @@ export default function reducer(state = initialState, action){
             return{
                 ...state,
                 cutoff: action.payload
+            }
+        case ALIGNER_INPUT:
+            return{
+                ...state,
+                aligner: action.payload
             }
         case BUILD_SNP_DB_INPUT:
             return{
@@ -111,12 +125,26 @@ export function handleDataType(event){
     }
 }
 
+export function handleReads(event){
+    return{
+        type: READS_INPUT,
+        payload: event
+    }
+}
+
 // ref genome
 
 // ref
 export function handleReference (event){
     return{
         type: REFERENCE_INPUT,
+        payload: event
+    }
+}
+
+export function handleAligner(event){
+    return{
+        type: ALIGNER_INPUT,
         payload: event
     }
 }
@@ -180,8 +208,8 @@ export function handleNumThreads(event){
 
 export function createForm(props){
     let formValues = {
-            projectName: props.projectName,
-            dataType:  props.dataType,
+            project: props.projectName,
+            data_type:  props.dataType,
             reference: props.reference,
             cutoff:  props.cutoff,
             genSNP:  props.genSNP,
