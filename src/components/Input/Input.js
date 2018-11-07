@@ -4,7 +4,23 @@ import '../../styles/input.css';
 import { connect } from 'react-redux'
 import Slider from 'react-rangeslider'
 
-import { handleProjectName, handleDataType, handleReads, handleReference, handleCutoff, handleCutoffInputBox, handleAligner, handleGenerateSNP, handleTreeOption, handleSelectionAnalysis, handleIntermediateFiles, handleNumThreads, createForm, handleBuildSNP } from '../../reducers/inputFormReducer'
+import { handleProjectName,
+          handleDataType, 
+          handleReads, 
+          handleGenomeFileUpload,
+          handleReference, 
+          handleCutoff, 
+          handleCutoffInputBox, 
+          handleAligner, 
+          handleGenerateSNP, 
+          handleTreeOption, 
+          handleSelectionAnalysis, 
+          handleIntermediateFiles, 
+          handleNumThreads, 
+          createForm, 
+          handleBuildSNP, 
+          resetForm 
+        } from '../../reducers/inputFormReducer'
 
 class InputForm extends Component {
   constructor() {
@@ -21,14 +37,31 @@ class InputForm extends Component {
     createForm(this.props)
   }
 
-  onChange = (e) => {
+  handleChange = (e) => {
     let files = e.target.files
-    console.log(files)
+    files.forEach(element=> console.log(element.name))
   }
 
   render() {
-    let { handleProjectName, handleDataType, handleReads, handleCutoff, handleCutoffInputBox, handleAligner, handleReference, handleGenerateSNP, handleTreeOption, handleSelectionAnalysis, handleIntermediateFiles, handleNumThreads, handleBuildSNP } = this.props
-    console.log(this.props.dataType)
+
+    let { handleProjectName, 
+          handleDataType, 
+          handleReads, 
+          handleGenomeFileUpload,
+          handleCutoff, 
+          handleCutoffInputBox, 
+          handleAligner, 
+          handleReference, 
+          handleGenerateSNP, 
+          handleTreeOption, 
+          handleSelectionAnalysis, 
+          handleIntermediateFiles, 
+          handleNumThreads, 
+          handleBuildSNP, 
+          resetForm 
+        } = this.props
+
+    console.log(8888888888888, this.props.refGenomeFiles)
     return (
       <div className='input-main-container'>
         <h1 className='phame-header'>PhaME</h1>
@@ -72,7 +105,7 @@ class InputForm extends Component {
                   <div className='form-row'>
                     <label>Upload Reads</label>
                     <div className='file-selector-input-container'>
-                      <input type='file' name='file' id='file' multiple onChange={(e) => this.onChange(e)} className='inputFile' />
+                      <input type='file' name='file' id='file' multiple onChange={(e)=>this.handleChange(e)} className='inputFile' />
                       <div className='btn btn-default' id='upload-file-button'>
                         <label htmlFor="file"> Upload reads <i className="fas fa-upload"></i></label>
                       </div>
@@ -87,12 +120,33 @@ class InputForm extends Component {
               <div className='form-row'>
                 <label>Reference Genomes</label>
                 <div className='file-selector-input-container'>
-                  <input type='file' name='file' id='file' multiple onChange={(e) => this.onChange(e)} className='inputFile' />
+                  <input type='file' name='file' id='file' multiple onChange={(e) => handleGenomeFileUpload(e)} className='inputFile' />
                   <div className='btn btn-default' id='upload-file-button'>
                     <label htmlFor="file"> Upload genomes <i className="fas fa-upload"></i></label>
                   </div>
                 </div>
               </div>
+
+              {this.props.refGenomeFiles.length
+                ?
+                <div className='form-row'>
+                <label>Genomes selected to upload</label>
+                <div className='file-upload-container'>
+                  {
+                    Array.from(this.props.refGenomeFiles).map(function (file) {
+                    console.log(file.name)
+                    return(
+                      <div key={file.name} className='file-delete-container'>
+                        <label>{file.name}</label>    <i class="fas fa-trash-alt"></i>
+                      </div>
+                    )
+                    })
+                  }
+                </div>
+                </div>
+                :
+                null
+              }
 
               <div className='form-row'>
                 <label>Reference</label>
@@ -132,8 +186,8 @@ class InputForm extends Component {
                 <label>Build SNP database</label>
                 <ButtonToolbar>
                   <ToggleButtonGroup name='buildSNPdb' type="radio" value={this.props.buildSNPDB} onChange={handleBuildSNP}>
-                    <ToggleButton value={1}>Yes</ToggleButton>
-                    <ToggleButton value={0}>No</ToggleButton>
+                    <ToggleButton value={0}>Only align to reference</ToggleButton>
+                    <ToggleButton value={1}>Build SNP Database</ToggleButton>
                   </ToggleButtonGroup>
                 </ButtonToolbar>
               </div>
@@ -141,7 +195,7 @@ class InputForm extends Component {
               <div className='form-row'>
                 <label>Generate SNPs from Coding Regions</label>
                 <ButtonToolbar>
-                  <ToggleButtonGroup name='genSNPs' type="radio" value={this.props.genSNP} onChange={handleGenerateSNP}>
+                  <ToggleButtonGroup name='genSNPs' type="radio" value={this.props.genSNP} onChange={handleGenerateSNP} >
                     <ToggleButton value={1}>Yes</ToggleButton>
                     <ToggleButton value={0}>No</ToggleButton>
                   </ToggleButtonGroup>
@@ -158,6 +212,16 @@ class InputForm extends Component {
                   </ToggleButtonGroup>
                 </ButtonToolbar>
               </div>
+
+              {this.props.treeOption===2 || this.props.treeOption===3
+              ?
+              <div>
+                Bootstap - Yes or No? Then if yes give Number of Boostraps with default 100
+              </div>
+              :
+              null
+            }
+
               <div className='form-row'>
                 <label>Perform Selection Analysis</label>
                 <ToggleButtonGroup name='selectionAnalysis' type='radio' value={this.props.selectionAnalysisOption} onChange={handleSelectionAnalysis}>
@@ -180,8 +244,8 @@ class InputForm extends Component {
             </Panel.Body>
           </Panel>
           <div className='form-button-container'>
-            <Button type="submit" bsStyle="primary">Submit</Button>
-            <Button >Clear Values</Button>
+            <Button type="submit" bsStyle="primary" bsSize='large'>Submit</Button>
+            <Button onClick={resetForm} bsSize='large'>Reset Form</Button>
           </div>
         </form>
       </div>
@@ -194,6 +258,7 @@ function mapStateToProps(state) {
     projectName: state.inputFormReducer.projectName,
     dataType: state.inputFormReducer.dataType,
     reads: state.inputFormReducer.reads,
+    refGenomeFiles: state.inputFormReducer.refGenomeFiles,
     reference: state.inputFormReducer.reference,
     cutoff: state.inputFormReducer.cutoff,
     aligner: state.inputFormReducer.aligner,
@@ -207,4 +272,19 @@ function mapStateToProps(state) {
 }
 
 
-export default connect(mapStateToProps, { handleProjectName, handleDataType, handleReads, handleReference, handleCutoff, handleAligner, handleCutoffInputBox, handleGenerateSNP, handleTreeOption, handleSelectionAnalysis, handleIntermediateFiles, handleNumThreads, handleBuildSNP })(InputForm)
+export default connect(mapStateToProps, { handleProjectName, 
+                                          handleDataType, 
+                                          handleReads,
+                                          handleGenomeFileUpload,  
+                                          handleReference, 
+                                          handleCutoff, 
+                                          handleAligner, 
+                                          handleCutoffInputBox, 
+                                          handleGenerateSNP, 
+                                          handleTreeOption, 
+                                          handleSelectionAnalysis, 
+                                          handleIntermediateFiles, 
+                                          handleNumThreads, 
+                                          handleBuildSNP, 
+                                          resetForm 
+                                        })(InputForm)

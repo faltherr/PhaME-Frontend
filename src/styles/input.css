@@ -75,6 +75,29 @@ label.btn.btn-default.active{
     font-size:20px;
 }
 
+.file-upload-container{
+    width: 50%;
+    height: auto;
+    border: 2px solid grey;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-end;
+}
+
+.file-delete-container{
+    display: flex;
+    font-weight: 400;
+    width: 100%;
+    justify-content: flex-end;
+    align-items: baseline;
+}
+
+.file-delete-container i{
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
 /* .upload-genome-container {
     font-size: 1.25em;
     font-weight: 700;

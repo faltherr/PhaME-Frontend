@@ -3,6 +3,7 @@ import axios from 'axios'
 const PROJECT_NAME_INPUT = 'PROJECT_NAME_INPUT'
 const DATA_TYPE_INPUT = 'DATA_TYPE_INPUT'
 const READS_INPUT = 'READS_INPUT'
+const REF_GENOME_FILE_INPUT ='REF_GENOME_FILE_INPUT'
 const REFERENCE_INPUT = 'REFERENCE_INPUT'
 const ALIGNER_INPUT = 'ALIGNER_INPUT'
 const CUTOFF_INPUT = 'CUTOFF_INPUT'
@@ -13,18 +14,20 @@ const INT_FILES_INPUT = 'INT_FILES_INPUT'
 const NUM_THREADS_INPUT = 'NM_THREADS_INPUT'
 const CREATE_FORM = 'CREATE_FORM'
 const BUILD_SNP_DB_INPUT = 'BUILD_SNP_DB_INPUT'
+const RESET_FORM_INPUT = 'RESET_FORM_INPUT'
 
 let initialState ={
     projectName: '',
     dataType: [0],
     reads: 2,
+    refGenomeFiles: [],
     referenceGenome: '',
-    reference: '',
+    reference: 1,
     cutoff: 0.1,
     aligner: 'bowtie',
-    buildSNPDB: '',
-    genSNP: '',
-    treeOption: '',
+    buildSNPDB: 0,
+    genSNP: 0,
+    treeOption: 1,
     selectionAnalysisOption: 0,
     intermediateFilesOption: 0,
     numberTreads: 1,
@@ -50,7 +53,12 @@ export default function reducer(state = initialState, action){
                 ...state,
                 reads: action.payload
             }
-        // ADD Reference genome file upload action creator
+
+        case REF_GENOME_FILE_INPUT:
+            return{
+                ...state,
+                refGenomeFiles: action.payload
+            }
 
         case REFERENCE_INPUT:
             return{
@@ -102,15 +110,16 @@ export default function reducer(state = initialState, action){
                 ...state,
                 postResponse: action.payload
             }
-        // case RESET_FORM_INPUT:
-        //     return initialState
+
+        case RESET_FORM_INPUT:
+            return initialState
+
           default:
             return state
     }
 }
 
 export function handleProjectName(event){
-    console.log(event)
     let name = event.target.value
     return {
         type: PROJECT_NAME_INPUT,
@@ -132,9 +141,14 @@ export function handleReads(event){
     }
 }
 
-// ref genome
+export function handleGenomeFileUpload(event){
+    console.log(event)
+    return{
+        type: REF_GENOME_FILE_INPUT,
+        payload: event.target.files
+    }
+}
 
-// ref
 export function handleReference (event){
     return{
         type: REFERENCE_INPUT,
@@ -228,6 +242,12 @@ export function createForm(props){
         payload: postResponse
     }
 
+}
+
+export function resetForm() {
+    return{
+        type: RESET_FORM_INPUT
+    }
 }
 
 
