@@ -4,6 +4,7 @@ const PROJECT_NAME_INPUT = 'PROJECT_NAME_INPUT'
 const DATA_TYPE_INPUT = 'DATA_TYPE_INPUT'
 const READS_INPUT = 'READS_INPUT'
 const REF_GENOME_FILE_INPUT ='REF_GENOME_FILE_INPUT'
+const DELETE_GENOME_FILE = 'DELETE_GENOME_FILE'
 const REFERENCE_INPUT = 'REFERENCE_INPUT'
 const ALIGNER_INPUT = 'ALIGNER_INPUT'
 const CUTOFF_INPUT = 'CUTOFF_INPUT'
@@ -36,6 +37,7 @@ let initialState ={
 
 export default function reducer(state = initialState, action){
     console.log('Action payload', action.payload)
+    // console.log('Action type', action.type)
     switch (action.type){
         case PROJECT_NAME_INPUT:
             return{
@@ -55,9 +57,31 @@ export default function reducer(state = initialState, action){
             }
 
         case REF_GENOME_FILE_INPUT:
+            let files = action.payload
+            //Check for duplicates and only push files to state if they do not exist
+            let currentFileName = []
+            state.refGenomeFiles.forEach(element=> currentFileName.push(element.name))
+
+            let filesToAdd = []
+            for(let i=0;i<files.length; i++){
+                if(currentFileName.indexOf(files[i].name)===-1){
+                    filesToAdd.push(files[i])
+                }
+            }
+
+            let fullFileArrayState = [...state.refGenomeFiles, filesToAdd]
+            let flattendFileArray = fullFileArrayState.reduce((a,b)=>a.concat(b),[])
+            
+                return{
+                    ...state,
+                    refGenomeFiles: flattendFileArray
+                }
+        
+        case DELETE_GENOME_FILE:
+        let filteredArr = state.refGenomeFiles.filter(element=> element.name !== action.payload)
             return{
                 ...state,
-                refGenomeFiles: action.payload
+                refGenomeFiles: filteredArr
             }
 
         case REFERENCE_INPUT:
@@ -141,11 +165,20 @@ export function handleReads(event){
     }
 }
 
-export function handleGenomeFileUpload(event){
-    console.log(event)
+export function handleGenomeFileUpload(files){
+    console.log("File array in reducer", files)
     return{
         type: REF_GENOME_FILE_INPUT,
-        payload: event.target.files
+        payload: files
+    }
+}
+
+export function handleDeleteGenomeFile(fileName){
+    // let indexArr = [index1, index2]
+    // console.log(indexArr)
+    return{
+        type: DELETE_GENOME_FILE,
+        payload: fileName
     }
 }
 
