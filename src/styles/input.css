@@ -1,5 +1,5 @@
 .input-main-container{
-    height: 100%;
+    height: auto;
     padding-left: 10%;
     padding-right: 10%;
 }
@@ -51,7 +51,34 @@ label.btn.btn-default.active{
 .project-name-validator-container{
     width: 50%;
     display: flex;
-    justify-content: flex-end;
+    flex-direction: column;
+    align-items: flex-end;
+    /* justify-content: flex-end; */
+}
+
+.slider-validator-container{
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.bootstrap-validator-container{
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.projectName{
+    width: 70%;
+}
+
+.invalid-input{
+    background-color: #F6D0C8;
+    color: #514F4F;
+    border-radius: 2px;
+    font-size: 12px;
 }
 
 .file-selector-input-container{
