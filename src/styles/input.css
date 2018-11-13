@@ -48,6 +48,12 @@ label.btn.btn-default.active{
     width: 50%;
 } */
 
+.project-name-validator-container{
+    width: 50%;
+    display: flex;
+    justify-content: flex-end;
+}
+
 .file-selector-input-container{
     width: 50%;
     display: flex;
@@ -73,6 +79,9 @@ label.btn.btn-default.active{
 
 #upload-file-button{
     width:175px;
+    background: #ADA996;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to top, #EAEAEA, #DBDBDB, #F2F2F2);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to top, #EAEAEA, #DBDBDB, #F2F2F2); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }
 
 #upload-file-button i{
@@ -92,7 +101,6 @@ label.btn.btn-default.active{
     box-shadow:         inset 0 0 2px #cccccc;
     border-radius: 5px;
     border-color: #ccc;
-
 }
 
 .file-delete-container{

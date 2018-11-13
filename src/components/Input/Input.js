@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Panel, ToggleButton, ToggleButtonGroup, ButtonToolbar, Button } from 'react-bootstrap';
+import { Panel, ToggleButton, ToggleButtonGroup, ButtonToolbar, Button, Tooltip } from 'react-bootstrap';
 import '../../styles/input.css';
 import { connect } from 'react-redux'
 import Slider from 'react-rangeslider'
@@ -8,6 +8,10 @@ import {
   handleProjectName,
   handleDataType,
   handleReads,
+  handleContigFileUpload,
+  handleDeleteContigFile,
+  handleReadFileUpload,
+  handleDeleteReadFile,
   handleGenomeFileUpload,
   handleDeleteGenomeFile,
   handleReference,
@@ -16,7 +20,10 @@ import {
   handleAligner,
   handleGenerateSNP,
   handleTreeOption,
+  handleBootstrap,
+  handleNumberBootstraps,
   handleSelectionAnalysis,
+  handleAnalysisOptionType,
   handleIntermediateFiles,
   handleNumThreads,
   createForm,
@@ -44,54 +51,43 @@ class InputForm extends Component {
     files.forEach(element => console.log(element.name))
   }
 
-  genomeFileInput = (e) => {
+  // genomeFileInput = (e) => {
+  //   let newFiles = []
+  //   let fileArray = Array.from(e.target.files)
+  //   fileArray.forEach(element => {
+  //       newFiles.push(element)
+  //   })
+  //   this.props.handleGenomeFileUpload(newFiles)
+  // }
+  
+  // contigFileInput = (e) => {
+  //   let newContigFiles = []
+  //   let contigFileArray = Array.from(e.target.files)
+  //   contigFileArray.forEach(element => {
+  //     newContigFiles.push(element)
+  //   })
+  //   this.props.handleContigFileUpload(newContigFiles)
+  // }
+
+  fileInput = (e, reduxFunction) => {
     let newFiles = []
     let fileArray = Array.from(e.target.files)
     fileArray.forEach(element => {
         newFiles.push(element)
     })
-    this.props.handleGenomeFileUpload(newFiles)
+    reduxFunction(newFiles)
   }
-
-  // genomeFileList = () => {
-  //   return (
-  //     this.props.refGenomeFiles.length
-  //       ?
-  //       <div className='form-row'>
-  //         <label>Genomes selected to upload</label>
-  //         <div className='file-upload-container'>
-
-  //           {
-  //             this.props.refGenomeFiles[0].map((file, i) => {
-  //               console.log('This is the file name', file.name)
-  //               return (
-  //                 <div key={file.name} className='file-delete-container'>
-  //                   <label>{file.name}</label>    <i className="fas fa-trash-alt" onClick={() => handleDeleteGenomeFile(i)}></i>
-  //                 </div>
-  //               )
-  //             })
-  //           }
-  //         </div>
-  //       </div>
-  //       :
-  //       null
-  //   )
-  // }
-
-  // componentDidUpdate(prevProps) {
-  //   console.log('current length', this.props.refGenomeFiles.length)
-  //   console.log('previous length', prevProps.refGenomeFiles.length)
-  //   if (this.props.refGenomeFiles.length !== prevProps.refGenomeFiles.length) {
-  //     console.log('Should update?')
-  //     this.genomeFileList()
-  //   }
-  // }
 
   render() {
 
     let { handleProjectName,
       handleDataType,
       handleReads,
+      handleContigFileUpload,
+      handleDeleteContigFile,
+      handleReadFileUpload,
+      handleDeleteReadFile,
+      handleGenomeFileUpload,
       handleDeleteGenomeFile,
       handleCutoff,
       handleCutoffInputBox,
@@ -99,19 +95,17 @@ class InputForm extends Component {
       handleReference,
       handleGenerateSNP,
       handleTreeOption,
+      handleBootstrap,
+      handleNumberBootstraps,
       handleSelectionAnalysis,
+      handleAnalysisOptionType,
       handleIntermediateFiles,
       handleNumThreads,
       handleBuildSNP,
       resetForm
     } = this.props
 
-    // Some console logs to check if the display is correct
-    console.log(8888888888888, this.props.refGenomeFiles)
-
-    this.props.refGenomeFiles.forEach((element, i2)=>{
-        console.log(`subEls ${i2}!!!!!!!!!!`, element.name)
-    })
+    console.log(this.props.projectName.length)
 
     return (
       <div className='input-main-container'>
@@ -126,10 +120,21 @@ class InputForm extends Component {
             <Panel.Body>
               <div className='form-row'>
                 <label>Project Name</label>
-                <input name='projectName' onChange={handleProjectName} value={this.props.projectName} />
+                <div className='project-name-validator-container'>
+                {
+                  this.props.projectName.length < 3 || this.props.projectName.length > 20
+                  ?
+                  <Tooltip placement="left" className="in" id="tooltip-left">
+                    Project name should be between 3 and 20 characters
+                  </Tooltip>
+                  :
+                  null  
+                }
+                  <input name='projectName' onChange={handleProjectName} value={this.props.projectName} maxLength="30" placeholder='(REQUIRED, Between 3 and 20 characters)'/>
+                </div>
               </div>
               <div className='form-row'>
-                <label>Input Data Type</label>
+                <label>Input Data Type <i className="fas fa-info-circle" id='input-data-info'></i></label>
                 <ButtonToolbar>
                   <ToggleButtonGroup type="checkbox" value={this.props.dataType} onChange={handleDataType}>
                     <ToggleButton value={0}>Full</ToggleButton>
@@ -138,6 +143,41 @@ class InputForm extends Component {
                   </ToggleButtonGroup>
                 </ButtonToolbar>
               </div>
+
+              {this.props.dataType.includes(1)
+                ?
+                  <div className='form-row'>
+                    <label>Upload Contigs</label>
+                    <div className='file-selector-input-container'>
+                      <input type='file' name='contigFile' id='contigFile' multiple onChange={(e) => this.fileInput(e, handleContigFileUpload)} className='inputFile' />
+                      <div className='btn btn-default' id='upload-file-button'>
+                        <label htmlFor="contigFile"> Upload contigs <i className="fas fa-upload"></i></label>
+                      </div>
+                    </div>
+                  </div>
+                :
+                null
+              }
+
+               {this.props.contigFiles.length
+                ?
+                <div className='form-row'>
+                <label>Contig files selected to upload</label>
+                <div className='file-upload-container'>
+                {
+                    this.props.contigFiles.map((element, index1)=>{
+                        return(
+                          <div key={element.name} className='file-delete-container'>
+                          <label>{element.name}</label>    <i className="fas fa-trash-alt" onClick={()=>handleDeleteContigFile(element.name)}></i>
+                        </div>
+                        )
+                      })
+                }
+                </div>
+                </div>
+                :
+                null
+              }
 
               {this.props.dataType.includes(2)
                 ?
@@ -156,9 +196,9 @@ class InputForm extends Component {
                   <div className='form-row'>
                     <label>Upload Reads</label>
                     <div className='file-selector-input-container'>
-                      <input type='file' name='file' id='file' multiple onChange={(e) => this.handleChange(e)} className='inputFile' />
+                      <input type='file' name='readsFile' id='readsFile' multiple onChange={(e) => this.fileInput(e, handleReadFileUpload)} className='inputFile' />
                       <div className='btn btn-default' id='upload-file-button'>
-                        <label htmlFor="file"> Upload reads <i className="fas fa-upload"></i></label>
+                        <label htmlFor="readsFile"> Upload reads <i className="fas fa-upload"></i></label>
                       </div>
                     </div>
                   </div>
@@ -168,12 +208,32 @@ class InputForm extends Component {
                 null
               }
 
+               {this.props.readFiles.length
+                ?
+                <div className='form-row'>
+                <label>Read files selected to upload</label>
+                <div className='file-upload-container'>
+                {
+                    this.props.readFiles.map((element, index1)=>{
+                        return(
+                          <div key={element.name} className='file-delete-container'>
+                          <label>{element.name}</label>    <i className="fas fa-trash-alt" onClick={()=>handleDeleteReadFile(element.name)}></i>
+                        </div>
+                        )
+                      })
+                }
+                </div>
+                </div>
+                :
+                null
+              }
+
               <div className='form-row'>
                 <label>Reference Genomes</label>
                 <div className='file-selector-input-container'>
-                  <input type='file' name='file' id='file' multiple onChange={(e) => this.genomeFileInput(e)} className='inputFile' />
+                  <input type='file' name='genomeFile' id='genomeFile' multiple onChange={(e) => this.fileInput(e, handleGenomeFileUpload)} className='inputFile' />
                   <div className='btn btn-default' id='upload-file-button'>
-                    <label htmlFor="file"> Upload genomes <i className="fas fa-upload"></i></label>
+                    <label htmlFor="genomeFile"> Upload genomes <i className="fas fa-upload"></i></label>
                   </div>
                 </div>
               </div>
@@ -187,7 +247,6 @@ class InputForm extends Component {
                     this.props.refGenomeFiles.map((element, index1)=>{
                         return(
                           <div key={element.name} className='file-delete-container'>
-                          {/* <label>{subElement.name}</label>    <i className="fas fa-trash-alt" onClick={()=>handleDeleteGenomeFile(index1, index2)}></i> */}
                           <label>{element.name}</label>    <i className="fas fa-trash-alt" onClick={()=>handleDeleteGenomeFile(element.name)}></i>
                         </div>
                         )
@@ -198,28 +257,6 @@ class InputForm extends Component {
                 :
                 null
               }
-
-                {/* {this.props.refGenomeFiles.length
-                ?
-                <div className='form-row'>
-                <label>Genomes selected to upload</label>
-                <div className='file-upload-container'>
-
-                  {
-                    this.props.refGenomeFiles[0].map((file, i) => {
-                    console.log(file.name)
-                    return(
-                      <div key={file.name} className='file-delete-container'>
-                        <label>{file.name}</label>    <i className="fas fa-trash-alt" onClick={()=>handleDeleteGenomeFile(i)}></i>
-                      </div>
-                    )
-                    })
-                  }
-                  </div>
-                  </div>
-                  :
-                  null
-                  } */}
 
                 <div className='form-row'>
                   <label>Reference</label>
@@ -288,11 +325,30 @@ class InputForm extends Component {
 
                 {this.props.treeOption === 2 || this.props.treeOption === 3
                   ?
-                  <div>
-                    Bootstap - Yes or No? Then if yes give Number of Boostraps with default 100
-              </div>
+                  <div className='form-row'>
+                  <label>Bootstrap</label>
+                  <ButtonToolbar>
+                    <ToggleButtonGroup name='bootstrap' type='radio' value={this.props.bootstrap} onChange={handleBootstrap}>
+                      <ToggleButton value={1}>Yes</ToggleButton>
+                      <ToggleButton value={0}>No</ToggleButton>
+                    </ToggleButtonGroup>
+                  </ButtonToolbar>
+                  </div>
                   :
                   null
+                }
+
+                {this.props.bootstrap===1
+                ?
+                <div className='form-row'>
+                <label>Number of Bootstraps</label>
+                <div className='number-bootstrap-container'>
+                  {/* <Slider min={1} max={10000} step={1} value={this.props.numberBootstraps} onChange={handleNumberBootstraps} tooltip={false} style={{ 'width': '400px' }} /> */}
+                  <input className='number-bootstrap-input' type='number' step={1} value={this.props.numberBootstraps} onChange={handleNumberBootstraps} min={100} max={10000} />
+                </div>
+                </div>
+                :
+                null
                 }
 
                 <div className='form-row'>
@@ -302,6 +358,23 @@ class InputForm extends Component {
                     <ToggleButton value={0}>No</ToggleButton>
                   </ToggleButtonGroup>
                 </div>
+
+                {this.props.selectionAnalysisOption===1
+                  ?
+                  <div className='form-row'>
+                    <label>Select Analysis Option</label>
+                    <ButtonToolbar>
+                      <ToggleButtonGroup name='reads' type="radio" value={this.props.analysisOptionType} onChange={handleAnalysisOptionType}>
+                        <ToggleButton value={0}>PAML</ToggleButton>
+                        <ToggleButton value={1}>HyPhy</ToggleButton>
+                        <ToggleButton value={2}>Both </ToggleButton>
+                      </ToggleButtonGroup>
+                    </ButtonToolbar>
+                  </div>
+                  :
+                  null
+                }
+
                 <div className='form-row'>
                   <label>Remove Intermediate Files</label>
                   <ToggleButtonGroup name='removeIntermediateFiles' type='radio' value={this.props.intermediateFilesOption} onChange={handleIntermediateFiles}>
@@ -309,11 +382,16 @@ class InputForm extends Component {
                     <ToggleButton value={0}>No</ToggleButton>
                   </ToggleButtonGroup>
                 </div>
-                
+
                 <div className='form-row'>
                   <label>Number of Threads</label>
-
-                  <input className='input-threads' type='number' min='1' max='4' onChange={handleNumThreads} value={this.props.numberTreads} />
+                  {/* <input className='input-threads' type='number' min='1' max='4' onChange={handleNumThreads} value={this.props.numberTreads} /> */}
+                  <ToggleButtonGroup name='numberThreads' type='radio' value={this.props.numberTreads} onChange={handleNumThreads}>
+                    <ToggleButton value={1}>1</ToggleButton>
+                    <ToggleButton value={2}>2</ToggleButton>
+                    <ToggleButton value={3}>3</ToggleButton>
+                    <ToggleButton value={4}>4</ToggleButton>
+                  </ToggleButtonGroup>
                 </div>
             </Panel.Body>
           </Panel>
@@ -332,13 +410,18 @@ function mapStateToProps(state) {
           projectName: state.inputFormReducer.projectName,
         dataType: state.inputFormReducer.dataType,
         reads: state.inputFormReducer.reads,
+        contigFiles: state.inputFormReducer.contigFiles,
+        readFiles: state.inputFormReducer.readFiles,
         refGenomeFiles: state.inputFormReducer.refGenomeFiles,
         reference: state.inputFormReducer.reference,
         cutoff: state.inputFormReducer.cutoff,
         aligner: state.inputFormReducer.aligner,
         genSNP: state.inputFormReducer.genSNP,
         treeOption: state.inputFormReducer.treeOption,
+        bootstrap: state.inputFormReducer.bootstrap,
+        numberBootstraps: state.inputFormReducer.numberBootstraps,
         selectionAnalysisOption: state.inputFormReducer.selectionAnalysisOption,
+        analysisOptionType: state.inputFormReducer.analysisOptionType,
         intermediateFilesOption: state.inputFormReducer.intermediateFilesOption,
         numberTreads: state.inputFormReducer.numberTreads,
         buildSNPDB: state.inputFormReducer.buildSNPDB
@@ -347,9 +430,13 @@ function mapStateToProps(state) {
     
     
 export default connect(mapStateToProps, {
-          handleProjectName,
+        handleProjectName,
         handleDataType,
         handleReads,
+        handleContigFileUpload,
+        handleDeleteContigFile,
+        handleReadFileUpload,
+        handleDeleteReadFile,
         handleGenomeFileUpload,
         handleDeleteGenomeFile,
         handleReference,
@@ -358,7 +445,10 @@ export default connect(mapStateToProps, {
         handleCutoffInputBox,
         handleGenerateSNP,
         handleTreeOption,
+        handleBootstrap,
+        handleNumberBootstraps,
         handleSelectionAnalysis,
+        handleAnalysisOptionType,
         handleIntermediateFiles,
         handleNumThreads,
         handleBuildSNP,

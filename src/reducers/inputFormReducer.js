@@ -3,6 +3,10 @@ import axios from 'axios'
 const PROJECT_NAME_INPUT = 'PROJECT_NAME_INPUT'
 const DATA_TYPE_INPUT = 'DATA_TYPE_INPUT'
 const READS_INPUT = 'READS_INPUT'
+const CONTIG_FILE_INPUT = 'CONTIG_FILE_INPUT'
+const DELETE_CONTIG_FILE = 'DELETE_CONTIG_FILE'
+const READ_FILE_INPUT = 'READ_FILE_INPUT'
+const DELETE_READ_FILE = 'DELETE_READ_FILE'
 const REF_GENOME_FILE_INPUT ='REF_GENOME_FILE_INPUT'
 const DELETE_GENOME_FILE = 'DELETE_GENOME_FILE'
 const REFERENCE_INPUT = 'REFERENCE_INPUT'
@@ -10,7 +14,10 @@ const ALIGNER_INPUT = 'ALIGNER_INPUT'
 const CUTOFF_INPUT = 'CUTOFF_INPUT'
 const GEN_SNP_INPUT = 'GEN_SNP_INPUT'
 const TREE_OPTION_INPUT = 'TREE_OPTION_INPUT'
+const BOOTSTRAP_INPUT = 'BOOTSTRAP_INPUT'
+const NUM_BOOTSTRAP_INPUT = 'NUM_BOOTSTRAP_INPUT'
 const SELECTION_ANALYSIS_INPUT = 'SELECTION_ANALYSIS_INPUT'
+const SELECTION_ANALYSIS_TYPE_INPUT = 'SELECTION_ANALYSIS_TYPE_INPUT'
 const INT_FILES_INPUT = 'INT_FILES_INPUT'
 const NUM_THREADS_INPUT = 'NM_THREADS_INPUT'
 const CREATE_FORM = 'CREATE_FORM'
@@ -21,6 +28,8 @@ let initialState ={
     projectName: '',
     dataType: [0],
     reads: 2,
+    contigFiles: [],
+    readFiles: [],
     refGenomeFiles: [],
     referenceGenome: '',
     reference: 1,
@@ -29,15 +38,18 @@ let initialState ={
     buildSNPDB: 0,
     genSNP: 0,
     treeOption: 1,
+    bootstrap: 0,
+    numberBootstraps: 100,
     selectionAnalysisOption: 0,
+    analysisOptionType: 0,
     intermediateFilesOption: 0,
     numberTreads: 1,
     postResponse: []
 }
 
 export default function reducer(state = initialState, action){
-    console.log('Action payload', action.payload)
-    // console.log('Action type', action.type)
+    // console.log('Action payload', action.payload)
+    console.log('Action type', action.type)
     switch (action.type){
         case PROJECT_NAME_INPUT:
             return{
@@ -56,6 +68,61 @@ export default function reducer(state = initialState, action){
                 reads: action.payload
             }
 
+        case CONTIG_FILE_INPUT:
+
+            let contigFiles = action.payload
+            let currentContigFileName = []
+            state.contigFiles.forEach(element=> currentContigFileName.push(element.name))
+
+            let contigFilesToAdd = []
+            for(let i=0;i<contigFiles.length; i++){
+                if(currentContigFileName.indexOf(contigFiles[i].name)===-1){
+                    contigFilesToAdd.push(contigFiles[i])
+                }
+            }
+
+            let fullContigFileArrayState = [...state.contigFiles, contigFilesToAdd]
+            let flattendContigFileArray = fullContigFileArrayState.reduce((a,b)=>a.concat(b),[])
+
+            return{
+                ...state,
+                contigFiles: flattendContigFileArray
+            }
+
+        case DELETE_CONTIG_FILE:
+            let filteredContigArr = state.contigFiles.filter(element=> element.name !== action.payload)
+                return{
+                    ...state,
+                    contigFiles: filteredContigArr
+                }
+        
+        case READ_FILE_INPUT:
+
+            let readFiles = action.payload
+            let currentReadFileName = []
+            state.readFiles.forEach(element=> currentReadFileName.push(element.name))
+            let readFilesToAdd = []
+            for(let i=0;i<readFiles.length; i++){
+                if(currentReadFileName.indexOf(readFiles[i].name)===-1){
+                    readFilesToAdd.push(readFiles[i])
+                }
+            }
+
+            let fullReadFileArrayState = [...state.readFiles, readFilesToAdd]
+            let flattendReadFileArray = fullReadFileArrayState.reduce((a,b)=>a.concat(b),[])
+
+            return{
+                ...state,
+                readFiles: flattendReadFileArray
+            }
+        
+        case DELETE_READ_FILE:
+            let filteredReadArr = state.readFiles.filter(element=> element.name !== action.payload)
+            return{
+                ...state,
+                readFiles: filteredReadArr
+            }
+        
         case REF_GENOME_FILE_INPUT:
             let files = action.payload
             //Check for duplicates and only push files to state if they do not exist
@@ -114,10 +181,25 @@ export default function reducer(state = initialState, action){
                 ...state,
                 treeOption: action.payload
             }
+        case BOOTSTRAP_INPUT:
+            return{
+                ...state,
+                bootstrap: action.payload
+            }
+        case NUM_BOOTSTRAP_INPUT:
+            return{
+                ...state,
+                numberBootstraps: action.payload
+            }    
         case SELECTION_ANALYSIS_INPUT:
             return{
                 ...state,
                 selectionAnalysisOption: action.payload
+            }
+        case SELECTION_ANALYSIS_TYPE_INPUT:
+            return{
+                ...state,
+                analysisOptionType: action.payload
             }
         case INT_FILES_INPUT:
             return{
@@ -165,6 +247,35 @@ export function handleReads(event){
     }
 }
 
+export function handleContigFileUpload(files){
+    return{
+        type: CONTIG_FILE_INPUT,
+        payload: files
+    }
+}
+
+export function handleDeleteContigFile(fileName){
+    return{
+        type: DELETE_CONTIG_FILE,
+        payload: fileName
+    }
+}
+
+export function handleReadFileUpload(files){
+    console.log('Handle read input!!!!!!')
+    return{
+        type: READ_FILE_INPUT,
+        payload: files
+    }
+}
+
+export function handleDeleteReadFile(fileName){
+    return{
+        type: DELETE_READ_FILE,
+        payload: fileName
+    }
+}
+
 export function handleGenomeFileUpload(files){
     console.log("File array in reducer", files)
     return{
@@ -174,8 +285,6 @@ export function handleGenomeFileUpload(files){
 }
 
 export function handleDeleteGenomeFile(fileName){
-    // let indexArr = [index1, index2]
-    // console.log(indexArr)
     return{
         type: DELETE_GENOME_FILE,
         payload: fileName
@@ -232,9 +341,30 @@ export function handleTreeOption(event){
     }
 }
 
+export function handleBootstrap(event){
+    return{
+        type: BOOTSTRAP_INPUT,
+        payload: event
+    }
+}
+
+export function handleNumberBootstraps(event){
+    return{
+        type: NUM_BOOTSTRAP_INPUT,
+        payload: +event.target.value
+    }
+}
+
 export function handleSelectionAnalysis(event){
     return{
         type: SELECTION_ANALYSIS_INPUT,
+        payload: event
+    }
+}
+
+export function handleAnalysisOptionType(event){
+    return{
+        type: SELECTION_ANALYSIS_TYPE_INPUT,
         payload: event
     }
 }
@@ -249,7 +379,7 @@ export function handleIntermediateFiles(event){
 export function handleNumThreads(event){
     return{
         type: NUM_THREADS_INPUT,
-        payload: event.target.value
+        payload: event
     }
 }
 
